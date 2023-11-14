@@ -1,6 +1,6 @@
 <template>
   <div class="app" id="app">
-    <Game :diff="difficulty" :isGameStart="isGameStart" />
+    <Game :diff="difficulty" :isGameStart="isGameStart" @lose="handleLose" />
     <form
       class="settings"
       :class="{'settings_inactive': isGameStart}"
@@ -40,6 +40,9 @@ export default {
   methods: {
     startGame() {
       this.isGameStart = true;
+    },
+    handleLose() {
+      this.isGameStart = false;
     }
   }
 }

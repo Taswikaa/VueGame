@@ -3,26 +3,38 @@
     <Cell 
       :cellId="first"
       :soundSrc="firstSrc"
-      @clickCell="(i) => userSelect(i)" 
+      :isGameStart="isGameStart"
+      :cellToClick="cellToClick"
+      :computerSequence="gameplay.gameSubsequence"
+      @clickCell="(i) => userSelect(i)"
     />
     <Cell 
       :cellId="second"
       :soundSrc="secondSrc"
-      @clickCell="(i) => userSelect(i)" 
+      :isGameStart="isGameStart"
+      :cellToClick="cellToClick"
+      :computerSequence="gameplay.gameSubsequence"
+      @clickCell="(i) => userSelect(i)"
     />
     <Cell 
       :cellId="third"
       :soundSrc="thirdSrc"
-      @clickCell="(i) => userSelect(i)" 
+      :isGameStart="isGameStart"
+      :cellToClick="cellToClick"
+      :computerSequence="gameplay.gameSubsequence"
+      @clickCell="(i) => userSelect(i)"
     />
     <Cell 
       :cellId="four"
       :soundSrc="fourSrc"
-      @clickCell="(i) => userSelect(i)" 
+      :isGameStart="isGameStart"
+      :cellToClick="cellToClick"
+      :computerSequence="gameplay.gameSubsequence"
+      @clickCell="(i) => userSelect(i)"
     />
     <div class="info">
       <p>Раунд: {{ gameplay.roundCount }}</p>
-      <p class="lose">Вы проиграли</p>
+      <p :class="{lose: !isLose}">Вы проиграли</p>
     </div>
   </div>
 </template>
@@ -56,35 +68,64 @@ export default {
         selectedDiff: '',
         roundCount: 0,
         turn: 'computer',
-      }
+      },
+      cellToClick: '',
+      isLose: false,
     }
   },
   methods: {
     chooseRandomValue() {
-      return Math.floor(Math.random() * 4) + 1;
+      const random = Math.floor(Math.random() * 4) + 1;
+      if (random === 1) return 'first';
+      if (random === 2) return 'second';
+      if (random === 3) return 'third';
+      if (random === 4) return 'four';
+    },
+    computerClicks(el) {
+      if (el === 1) this.cellToClick = 'first';
+      if (el === 2) this.cellToClick = 'second';
+      if (el === 3) this.cellToClick = 'third';
+      if (el === 4) this.cellToClick = 'four';
     },
     userSelect(id) {
       if (this.gameplay.turn === 'user') {
-        console.log('input' ,id);
-        this.gameplay.turn = 'computer';
-        this.computerSelect();
+        this.gameplay.userSubsequence.push(id);
+        this.gameplay.userSubsequence.forEach((el, i) => {
+          if (el !== this.gameplay.gameSubsequence[i]) {
+            this.$emit('lose');
+            this.gameplay.roundCount = 0;
+            this.gameplay.turn = 'computer';
+            this.gameplay.selectedDiff = '';
+            this.gameplay.gameSubsequence = [];
+            this.gameplay.userSubsequence = [];
+            this.isLose = true;
+          }
+        })
+        if (this.gameplay.userSubsequence.length === this.gameplay.gameSubsequence.length && !this.isLose) {
+          this.gameplay.turn = 'computer';
+          this.computerSelect();
+        }
       }
     },
     computerSelect() {
       if (this.gameplay.turn === 'computer') {
         this.gameplay.roundCount++;
+        this.gameplay.userSubsequence = [];
         const newCellNumber = this.chooseRandomValue();
         this.gameplay.gameSubsequence.push(newCellNumber);
-        for (let i = 0; i < this.gameplay.gameSubsequence.length; i++) {
-          console.log('Игра', this.gameplay.gameSubsequence[i]);
-        }
+        this.gameplay.gameSubsequence.forEach(el => {
+          this.computerClicks(el);
+        })
         this.gameplay.turn = 'user';
       }
     }
   },
   watch: {
-    isGameStart() {
-      this.computerSelect();
+    isGameStart(value) {
+      if (value) {
+        this.isLose = false;
+        this.computerSelect();
+      }
     }
   }
 }

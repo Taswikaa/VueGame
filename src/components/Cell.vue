@@ -11,7 +11,7 @@
 <script>
 export default {
   name: 'Cell',
-  props: ['cellId', 'soundSrc'],
+  props: ['cellId', 'soundSrc', 'isGameStart', 'computerSequence'],
   data() {
     return {
       isActive: false,
@@ -19,13 +19,15 @@ export default {
   },
   methods: {
     light() {
-      setTimeout(() => this.isActive = false, 1500);
-      this.isActive = true;
-      const sound = new Audio(this.soundSrc);
-      sound.play();
-      this.$emit('clickCell', this.cellId);
+      if (this.isGameStart) {
+        setTimeout(() => this.isActive = false, 1000);
+        this.isActive = true;
+        const sound = new Audio(this.soundSrc);
+        sound.play();
+        this.$emit('clickCell', this.cellId);
+      }
     }
-  }
+  },
 }
 </script>
 
@@ -36,7 +38,7 @@ export default {
     cursor: pointer;
     max-width: 200px;
     max-height: 200px;
-    opacity: .6;
+    opacity: .2;
   }
 
   .cell_active {
