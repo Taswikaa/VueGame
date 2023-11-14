@@ -4,32 +4,32 @@
       :cellId="first"
       :soundSrc="firstSrc"
       :isGameStart="isGameStart"
-      :cellToClick="cellToClick"
-      :computerSequence="gameplay.gameSubsequence"
+      :canUserClick="canUserClick"
+      :delay="diff"
       @clickCell="(i) => userSelect(i)"
     />
     <Cell 
       :cellId="second"
       :soundSrc="secondSrc"
       :isGameStart="isGameStart"
-      :cellToClick="cellToClick"
-      :computerSequence="gameplay.gameSubsequence"
+      :canUserClick="canUserClick"
+      :delay="diff"
       @clickCell="(i) => userSelect(i)"
     />
     <Cell 
       :cellId="third"
       :soundSrc="thirdSrc"
       :isGameStart="isGameStart"
-      :cellToClick="cellToClick"
-      :computerSequence="gameplay.gameSubsequence"
+      :canUserClick="canUserClick"
+      :delay="diff"
       @clickCell="(i) => userSelect(i)"
     />
     <Cell 
       :cellId="four"
       :soundSrc="fourSrc"
       :isGameStart="isGameStart"
-      :cellToClick="cellToClick"
-      :computerSequence="gameplay.gameSubsequence"
+      :canUserClick="canUserClick"
+      :delay="diff"
       @clickCell="(i) => userSelect(i)"
     />
     <div class="info">
@@ -69,23 +69,36 @@ export default {
         roundCount: 0,
         turn: 'computer',
       },
-      cellToClick: '',
       isLose: false,
+      canUserClick: false
     }
   },
   methods: {
+    delay() {
+      return new Promise(resolve => setTimeout(resolve, this.diff * 1));
+    },
+    async delayShow() {
+      await this.delay();
+    },
+    async startShow(array) {
+      this.canUserClick = false;
+      for (const item of array) {
+        await this.delayShow();
+        this.$children.forEach(el => {
+          if (item == el.$el.id) {
+            el.show();
+          }
+        })
+      }
+      this.canUserClick = true;
+      this.gameplay.turn = 'user';
+    },
     chooseRandomValue() {
       const random = Math.floor(Math.random() * 4) + 1;
       if (random === 1) return 'first';
       if (random === 2) return 'second';
       if (random === 3) return 'third';
       if (random === 4) return 'four';
-    },
-    computerClicks(el) {
-      if (el === 1) this.cellToClick = 'first';
-      if (el === 2) this.cellToClick = 'second';
-      if (el === 3) this.cellToClick = 'third';
-      if (el === 4) this.cellToClick = 'four';
     },
     userSelect(id) {
       if (this.gameplay.turn === 'user') {
@@ -113,10 +126,7 @@ export default {
         this.gameplay.userSubsequence = [];
         const newCellNumber = this.chooseRandomValue();
         this.gameplay.gameSubsequence.push(newCellNumber);
-        this.gameplay.gameSubsequence.forEach(el => {
-          this.computerClicks(el);
-        })
-        this.gameplay.turn = 'user';
+        this.startShow(this.gameplay.gameSubsequence);
       }
     }
   },

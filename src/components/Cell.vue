@@ -11,7 +11,7 @@
 <script>
 export default {
   name: 'Cell',
-  props: ['cellId', 'soundSrc', 'isGameStart', 'computerSequence'],
+  props: ['cellId', 'soundSrc', 'isGameStart', 'canUserClick', 'delay'],
   data() {
     return {
       isActive: false,
@@ -19,13 +19,19 @@ export default {
   },
   methods: {
     light() {
-      if (this.isGameStart) {
-        setTimeout(() => this.isActive = false, 1000);
+      if (this.isGameStart && this.canUserClick) {
+        setTimeout(() => this.isActive = false, 200);
         this.isActive = true;
         const sound = new Audio(this.soundSrc);
         sound.play();
         this.$emit('clickCell', this.cellId);
       }
+    },
+    show() {
+      setTimeout(() => this.isActive = false, this.delay * 1);
+      this.isActive = true;
+      const sound = new Audio(this.soundSrc);
+      sound.play();
     }
   },
 }

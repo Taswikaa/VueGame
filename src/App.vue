@@ -8,15 +8,15 @@
     >
       <label>
         Легко
-        <input type="radio" name="diff" value="easy" v-model="difficulty" :disabled="isGameStart ? true : false">
+        <input type="radio" name="diff" value='1500' v-model="difficulty" :disabled="isGameStart ? true : false">
       </label>
       <label>
         Нормально
-        <input type="radio" name="diff" value="medium" v-model="difficulty" :disabled="isGameStart ? true : false">
+        <input type="radio" name="diff" value='1000' v-model="difficulty" :disabled="isGameStart ? true : false">
       </label>
       <label>
         Сложно
-        <input type="radio" name="diff" value="hard" v-model="difficulty" :disabled="isGameStart ? true : false">
+        <input type="radio" name="diff" value='400' v-model="difficulty" :disabled="isGameStart ? true : false">
       </label>
       <button type="submit" :disabled="isGameStart ? true : false">Старт</button>
     </form>
@@ -34,7 +34,7 @@ export default {
   data() {
     return {
       isGameStart: false,
-      difficulty: 'easy',
+      difficulty: '1500',
     }
   },
   methods: {
