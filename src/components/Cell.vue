@@ -23,6 +23,7 @@ export default {
       this.isActive = true;
       const sound = new Audio(this.soundSrc);
       sound.play();
+      this.$emit('clickCell', this.cellId);
     }
   }
 }

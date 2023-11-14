@@ -1,24 +1,24 @@
 <template>
   <div class="app" id="app">
-    <Game />
-    <div class="info">
-      <p>Раунд: 10</p>
-      <p class="lose">Вы проиграли</p>
-    </div>
-    <form class="settings settings_inactive">
+    <Game :diff="difficulty" :isGameStart="isGameStart" />
+    <form
+      class="settings"
+      :class="{'settings_inactive': isGameStart}"
+      @submit.prevent="startGame"
+    >
       <label>
         Легко
-        <input type="radio" name="diff">
+        <input type="radio" name="diff" value="easy" v-model="difficulty" :disabled="isGameStart ? true : false">
       </label>
       <label>
         Нормально
-        <input type="radio" name="diff">
+        <input type="radio" name="diff" value="medium" v-model="difficulty" :disabled="isGameStart ? true : false">
       </label>
       <label>
         Сложно
-        <input type="radio" name="diff">
+        <input type="radio" name="diff" value="hard" v-model="difficulty" :disabled="isGameStart ? true : false">
       </label>
-      <button type="submit">Старт</button>
+      <button type="submit" :disabled="isGameStart ? true : false">Старт</button>
     </form>
   </div>
 </template>
@@ -30,6 +30,17 @@ export default {
   name: 'App',
   components: {
     Game
+  },
+  data() {
+    return {
+      isGameStart: false,
+      difficulty: 'easy',
+    }
+  },
+  methods: {
+    startGame() {
+      this.isGameStart = true;
+    }
   }
 }
 </script>
@@ -49,17 +60,6 @@ export default {
     color: #fff;
     align-items: center;
     padding-top: 120px;
-    position: relative;
-  }
-
-  .info {
-    font-size: 24px;
-    position: absolute;
-    top: 25px;
-    display: flex;
-    flex-direction: column;
-    row-gap: 10px;
-    text-align: center;
   }
 
   .settings {
@@ -70,31 +70,33 @@ export default {
     font-size: 24px;
   }
 
-  .settings_inactive {
-    opacity: .5;
-  }
-
   .settings button {
     font-size: 24px;
     border-radius: 10px;
+    cursor: pointer;
   }
 
   .settings label {
     cursor: pointer;
   }
 
-  .lose {
-    display: none;
+  .settings input {
+    cursor: pointer;
   }
 
-  @media (min-width: 1024px) {
-    .info {
-      right: 60px;
-      top: 120px;
-      font-size: 32px;
-      text-align: left;
-      row-gap: 15px;
-      min-width: 200px;
-    }
+  .settings_inactive {
+    opacity: .5;
+  }
+
+  .settings_inactive button {
+    cursor: default;
+  }
+
+  .settings_inactive label {
+    cursor: default;
+  }
+
+  .settings_inactive input {
+    cursor: default;
   }
 </style>
